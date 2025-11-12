@@ -1,0 +1,39 @@
+# Java / Maven build files
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.log
+
+# Eclipse specific files
+.classpath
+.project
+.settings/
+bin/
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.iws
+out/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
+
+# Maven wrapper
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Backup / temp files
+*.tmp
+*.bak
+*.swp
+*.swo
