@@ -1,40 +1,58 @@
 /*File: "REO.java"
- * Lab 9i: Real Estate, Part 4—Listings Module
+ * Lab 11i: Real Estate, Part 5—Bids Module
  * Author: Oliver Rivera
  * Course: CS-115-01
  * Instructor: Barbara Chamberlin
- * Date: Mar 2, 2024
+ * Date: Apr 2, 2024
  * Description:
- * 		* Line 39: (You will add a static Listings field to your REO class that
- * 					  creates a new Listings object to store your listings in the
- * 					  HashMap defined in your Listings class.)
- *		* Line 283-319: Add a House: Query the user for all the data needed to create
- *						a House object and then display the Appraisal Price. After the
- *						Appraisal Price is displayed, ask the user for the List price
- *						and add the new House object to your Listings HashMap.
- *		* Line 322-356: Add a Condo: Query the user for all the data needed to create
- *						a Condo object and then display the Appraisal Price. After the
- *						Appraisal Price is displayed, ask the user for the List price
- *						and add the new Condo object to your Listings HashMap.
- * 		* Line 240-277: Auto Populate: Add the ability for a user to create several
- * 						hard-coded House and Condo objects and add them to your
- * 						Listings HashMap object for testing purposes.
- * 		* Line 211-240: Show Listings:
- * 					- Display all the listings in the HashMap object as shown in the Example Run.
+ * 		* Line 303-380: Add Bids:
+ *						• You will need to list all the existing Residential objects
+ *						in the Listings map in a menu so your user can choose to which
+ *						property a bid will be added. Your menu should show how many
+ *						existing bids are already associated with each property.
+ *						• Once the user selects a property from the list, display the
+ *						details for that property along with a prompt to enter the
+ *						bidder's name and new bid amount.
+ *
+ *		* Line 383-454: Show Bids:
+ *						•You will need to list all the existing Residential objects in
+ *						the Listings map in a menu so your user can choose for which
+ *						property to show bids. Your menu should show how many existing bids
+ *						are associated with each property.
+ *						• Once the user selects a property from the list, display the details
+ *						for that property, along with a list of all existing bids with the
+ *						bidder's name and amount.
+ *
+ * 		* Line 240-277: Auto-Populate:
+ * 						• Add the ability for a user to create several bids for each Residential
+ * 						object in the Listing HashMap for testing purposes. Base the bid amount
+ * 						on the calculated appraisal price for each property.
+ *						• The NUMBER of bids for each property in the listings must be random.
+ *						Use the random module to determine how many bids each property will get.
+ *						Pick a random number between two and 10 for each property.
+ *						• The BID amount must be different for each bid. To calculate a bid, choose
+ *						a random number between -10% and +10% of the Appraisal Price of the property
+ *						and use that number for the bid. Each bidder will then have a different dib
+ *						for the property.
  *
  */
 
 package RealEstate;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
-
 
 import java.util.Iterator;
 
 class REO {
 
     private static final Listings listings = new Listings();
+
+    // HashMap to store bids for each property
+    private static final HashMap<String, HashMap<String, Double>> propertyBids = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -145,10 +163,13 @@ class REO {
             } else {
                 switch (choice) {
                     case "1":
+                        addNewBid(sIn);
                         break;
                     case "2":
+                        showExistingBids(sIn);
                         break;
                     case "3":
+                        autoPopulateBids();
                         break;
                     default:
                         System.out.println("Invalid response:  Please enter a choice from the menu (1-4)");
@@ -277,7 +298,197 @@ class REO {
     }
 
 
-    //Method for addHouse switch case 1 "Add House"
+    //Method for Bids Menu case 1 "Add New Bid"
+    private static void addNewBid(Scanner sIn) {
+
+        // Create an infinite loop for the bidding process
+        while (true) {
+
+            // Initialize a variable to keep track of the listing number
+            int listingNumber = 1;
+
+            // Display header for current property listings with bids
+            System.out.println("\nCurrent Listings for REO:");
+            System.out.println("No.      Property (bids)");
+            System.out.println("---------------------------");
+
+            // Iterate through each property listing in the listings map
+            for (Map.Entry<String, Residential> entry : listings.getListings().entrySet()) {
+
+                // Get the key of the current property
+                String propertyKey = entry.getKey();
+
+                // Retrieve or create a bids map for the current property
+                HashMap<String, Double> bidsMap = propertyBids.getOrDefault(propertyKey, new HashMap<>());
+
+                // Get the number of bids for the current property
+                int numBids = bidsMap.size();
+
+                // Display the listing number, property key, and number of bids
+                System.out.println(listingNumber + ": " + propertyKey + " (" + numBids + ")");
+                listingNumber++;
+            }
+
+            // Prompt the user to choose a property to add a bid or exit
+            System.out.print("ENTER: Exit back to the previous menu.");
+            System.out.print("\\n\\nFor which property would you like to add a bid?: ");
+            String userInput = sIn.nextLine();
+
+            // Check if the user input is empty (Exit back to the previous menu)
+            if (userInput.isEmpty()) {
+                return;
+            }
+
+            // Convert the user input to an integer for property selection
+            int propertyChoice = Integer.parseInt(userInput);
+
+            // Check if the property choice is valid
+            if (propertyChoice >= 1 && propertyChoice < listingNumber) {
+
+                // Get the selected property key based on the user's choice
+                String selectedPropertyKey = (String) listings.getStreetAddresses().toArray()[propertyChoice - 1];
+
+                // Get the selected property object using the selected property key
+                Residential selectedProperty = listings.getListings(selectedPropertyKey);
+
+                // Display property details
+                System.out.println(selectedProperty.toString());
+
+                // Prompt for bidder's name and new bid amount
+                System.out.print("\nPlease enter the name of the bidder: ");
+                String bidderName = sIn.nextLine();
+
+                System.out.print("Please enter the new bid: $");
+                double bidAmount = Double.parseDouble(sIn.nextLine());
+
+                // Retrieve or create a bids map for the selected property
+                HashMap<String, Double> bidsMap = propertyBids.getOrDefault(selectedPropertyKey, new HashMap<>());
+                // Add the new bid to the bids map for the selected property
+                bidsMap.put(bidderName, bidAmount);
+                // Update the propertyBids map with the updated bids map for the selected property
+                propertyBids.put(selectedPropertyKey, bidsMap);
+
+                // Print a message indicating the new bid was added successfully
+                System.out.println("\nNew bid for property '" + selectedPropertyKey + "' added.\n");
+            } else {
+                System.out.println("\nInvalid property choice.\n");
+            }
+        }
+    }
+
+    //Method for Bids Menu case 2 "Show Existing Bids"
+    private static void showExistingBids(Scanner sIn) {
+        while (true) {
+
+            // Initialize a variable to keep track of the listing number
+            int listingNumber = 1;
+
+            // Display header for current property listings with bids
+            System.out.println("\nCurrent Listings for REO:\n");
+
+            // Iterate through each property listing in the listings map
+            for (Map.Entry<String, Residential> entry : listings.getListings().entrySet()) {
+
+                // Get the key of the current property
+                String propertyKey = entry.getKey();
+                // Retrieve or create a bids map for the current property
+                HashMap<String, Double> bidsMap = propertyBids.getOrDefault(propertyKey, new HashMap<>());
+                // Get the number of bids for the current property
+                int numBids = bidsMap.size();
+
+                // Display the listing number, property key, and number of bids
+                System.out.println(listingNumber + ": " + propertyKey + " (" + numBids + ")");
+                listingNumber++;
+            }
+
+            // Prompt the user to choose a property to view bids or exit
+            System.out.print("ENTER: Exit back to the previous menu.");
+            System.out.print("\\n\\nFor which property would you like to add a bid?: ");
+            String userInput = sIn.nextLine();
+
+            // Check if the user input is empty (Exit back to the previous menu)
+            if (userInput.isEmpty()) {
+                return;
+            }
+
+            // Convert the user input to an integer for property selection
+            int propertyChoice = Integer.parseInt(userInput);
+
+            // Check if the property choice is valid
+            if (propertyChoice >= 1 && propertyChoice < listingNumber) {
+
+                // Get the selected property key based on the user's choice
+                String selectedPropertyKey = (String) listings.getStreetAddresses().toArray()[propertyChoice - 1];
+                // Get the selected property object using the selected property key
+                Residential selectedProperty = listings.getListings(selectedPropertyKey);
+
+                // Display property details
+                System.out.println(selectedProperty.toString());
+
+                // Display existing bids for the property
+                System.out.println("\nCurrent bids for this listing:");
+                System.out.println("---------------------------------------");
+                System.out.println("      Bidder              Bid");
+                System.out.println("---------------------------------------");
+
+                // Retrieve or create a bids map for the selected property
+                HashMap<String, Double> bidsMap = propertyBids.getOrDefault(selectedPropertyKey, new HashMap<>());
+
+                // Iterate through existing bids and print each bidder and bid amount
+                for (Map.Entry<String, Double> bid : bidsMap.entrySet()) {
+
+                    System.out.printf("%-25s $%.2f%n", bid.getKey(), bid.getValue());
+
+                }
+            } else {
+
+                System.out.println("\nInvalid property key. Please select a valid property.\n");
+
+            }
+        }
+    }
+
+    //Method for Bids Menu case 3 " Auto Populate Bids (Dev tool)"
+    private static void autoPopulateBids() {
+
+        //variables
+        Random random = new Random();
+
+        //Array of Random Bidders
+        String[] autoBidders = {"Patric Stewart", "Walter Koenig", "William Shatner", "Leonard Nimoy", "DeForect Kelley",
+                "James Doohan", "George Takei", "Majel Barrett", "Nichelle Nichol", "Jonathan Frank", "Marina Sirtis",
+                "Brent Spiner", "Gates McFadden", "Michael Dorn", "LeVar Burton", "Wil Wheaton", "Colm Meaney", "Michelle Forbes"};
+
+        // Iterate through each residential property in the listings
+        for (Residential property : listings.getResidences()) {
+            // Get a random number of bids between 2 and 10
+            int numBids = random.nextInt(9) + 2;
+
+            // Generate random bids for the property
+            for (int i = 0; i < numBids; i++) {
+                // Select a random bidder from autoBidders array
+                int index = random.nextInt(autoBidders.length);
+                String bidderName = autoBidders[index];
+
+                // Generate a random bid amount within the bid range
+                double minBidRange = property.calculateAppraisalPrice() * 0.9;
+                double maxBidRange = property.calculateAppraisalPrice() * 1.1;
+                double bidAmount = minBidRange + (maxBidRange - minBidRange) * random.nextDouble();
+
+                // Add the bid to the propertyBids map
+                HashMap<String, Double> bidsMap = propertyBids.getOrDefault(property.getStreetAddress(), new HashMap<>());
+                bidsMap.put(bidderName, bidAmount);
+                propertyBids.put(property.getStreetAddress(), bidsMap);
+            }
+
+            // Print the number of new bids added to each property
+            System.out.println("\n");
+            System.out.println(numBids + " new bids have been added to listing " + property.getStreetAddress() + ".");
+        }
+    }
+
+
+    //Method for Add Listing Menu switch case 1 "Add House"
     private static void addHouse(Scanner sIn) {
 
         System.out.print("Please enter the street address for the residence: ");
@@ -316,7 +527,7 @@ class REO {
 
     }
 
-    //Method for addCondo switch case 1 "Add Condo"
+    //Method for Add Listing Menu switch case 2 "Add Condo"
     private static void addCondo(Scanner sIn) {
 
         System.out.print("Please enter the street address for the residence: ");

@@ -18,13 +18,13 @@ class CondoTest {
 
     @Test
     void testGetFloorLvl() {
-        Condo c1 = new Condo("4420 S Atherton Dr", "84123",2 , 1, 750.00, 3);
+        Condo c1 = new Condo("4420 S Atherton Dr", "84123", 2, 1, 750.00, 3);
         assertEquals(3, c1.getFloorLvl());
     }
 
     @Test
     void testSetFloorLvl() {
-        Condo c1 = new Condo("4420 S Atherton Dr", "84123",2 , 1, 750.00, 3);
+        Condo c1 = new Condo("4420 S Atherton Dr", "84123", 2, 1, 750.00, 3);
         c1.setFloorLvl(2);
         assertEquals(2, c1.getFloorLvl());
     }
