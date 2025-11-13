@@ -44,19 +44,19 @@ public abstract class Property {
     }
 
     //Getter Methods
-    public String getStreetAddress() {
+    public String getStreetAddress(){
         return streetAddress;
     }
 
-    public String getZip() {
+    public String getZip(){
         return zip;
     }
 
-    public double getListPrice() {
+    public double getListPrice(){
         return listPrice;
     }
 
-    public double getAppraisalPrice() {
+    public double getAppraisalPrice(){
         return appraisalPrice;
     }
 

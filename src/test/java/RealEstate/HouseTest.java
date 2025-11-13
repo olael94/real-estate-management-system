@@ -18,13 +18,13 @@ class HouseTest {
 
     @Test
     void testGetYardAcres() {
-        House h1 = new House("4420 S Atherton Dr", "84123", 2, 1, 750.00, 10.00);
+        House h1 = new House("4420 S Atherton Dr", "84123",2 , 1, 750.00, 10.00);
         assertEquals(10.00, h1.getYardAcres(), 0.01);
     }
 
     @Test
     void testSetYardAcres() {
-        House h1 = new House("4420 S Atherton Dr", "84123", 2, 1, 750.00, 10.00);
+        House h1 = new House("4420 S Atherton Dr", "84123",2 , 1, 750.00, 10.00);
         h1.setYardAcres(15);
         assertEquals(15, h1.getYardAcres(), 0.01);
     }
