@@ -29,7 +29,7 @@ public abstract class Residential extends Property {
     }
 
     //Constructor with One Parameter
-    public  Residential(String aStreetAddress, String aZip,int aBedCount, int aBathCount, double aSqFootage) {
+    public Residential(String aStreetAddress, String aZip, int aBedCount, int aBathCount, double aSqFootage) {
         super(aStreetAddress, aZip);
         bedCount = aBedCount;
         bathCount = aBathCount;
@@ -37,15 +37,15 @@ public abstract class Residential extends Property {
     }
 
     //Getter Methods
-    public int getBeds(){
+    public int getBeds() {
         return bedCount;
     }
 
-    public int getBaths(){
+    public int getBaths() {
         return bathCount;
     }
 
-    public double getSize(){
+    public double getSize() {
         return sqFootage;
     }
 
